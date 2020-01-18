@@ -116,6 +116,7 @@ def test_remove_callback_from_callback():
 
 @pytest.mark.parametrize('num_threads', [5, 10])
 @pytest.mark.parametrize('num_iterations', range(1, 5000, 500))
+@pytest.mark.skip
 def test_parallel(num_threads: int, num_iterations: int):
     flag = Counter()
 
@@ -147,6 +148,7 @@ def test_check_if_not_cancelled():
     ct = CancellationToken()
 
     assert not ct.cancelled
+    assert not ct.completed
 
 
 def test_check_if_cancelled():
@@ -154,4 +156,34 @@ def test_check_if_cancelled():
     ct.cancel()
 
     assert ct.cancelled
+    assert ct.completed
 
+
+def test_mark_token_as_completed():
+    ct = CancellationToken()
+
+    ct.complete()
+
+    assert not ct.cancelled
+    assert ct.completed
+
+
+def test_dont_call_callbacks_when_canceling_completed_token():
+    ct = CancellationToken()
+
+    flag = Counter()
+    ct.on_cancel(flag.inc)
+
+    ct.complete()
+
+    assert flag.count == 0
+
+
+def test_dont_call_callback_being_added_to_completed_token():
+    ct = CancellationToken()
+    flag = Counter()
+
+    ct.complete()
+    ct.on_cancel(flag.inc)
+
+    assert flag.count == 0

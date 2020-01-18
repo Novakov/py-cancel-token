@@ -6,6 +6,7 @@ class CancellationToken:
     def __init__(self):
         self._callbacks: List[Callable[[], None]] = []
         self._canceled = False
+        self._completed = False
         self._lock = Lock()
 
     def on_cancel(self, callback: Callable[[], None]):
@@ -22,14 +23,20 @@ class CancellationToken:
             if self._canceled:
                 return
 
-            import time
-            time.sleep(0)
-
             self._canceled = True
+            self._completed = True
 
         for f in self._callbacks.copy():
             f()
 
+    def complete(self):
+        with self._lock:
+            self._completed = True
+
     @property
     def cancelled(self):
         return self._canceled
+
+    @property
+    def completed(self):
+        return self._completed
