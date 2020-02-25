@@ -1,8 +1,6 @@
-from threading import Thread, Barrier
+from threading import Thread
 from typing import List
-
 import pytest
-
 from cancel_token import CancellationToken
 
 
@@ -117,10 +115,12 @@ def test_remove_callback_from_callback():
 @pytest.mark.parametrize('num_threads', [5, 10])
 @pytest.mark.parametrize('num_iterations', range(1, 5000, 500))
 @pytest.mark.skip
-def test_parallel(num_threads: int, num_iterations: int):
+def test_parallel(num_threads, num_iterations):
+    # type: (int, int) -> None
+    from threading import Barrier
     flag = Counter()
 
-    holder: List[CancellationToken] = [None]
+    holder = []         # type: List[CancellationToken]
 
     def setup_token():
         holder[0] = CancellationToken()
@@ -133,7 +133,7 @@ def test_parallel(num_threads: int, num_iterations: int):
             barrier.wait()
             holder[0].cancel()
 
-    threads = [Thread(target=thread_proc) for i in range(0, num_threads)]
+    threads = [Thread(target=thread_proc) for _ in range(0, num_threads)]
 
     for t in threads:
         t.start()

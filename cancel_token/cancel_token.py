@@ -4,18 +4,20 @@ from typing import List, Callable
 
 class CancellationToken:
     def __init__(self):
-        self._callbacks: List[Callable[[], None]] = []
+        self._callbacks = []      # type: List[Callable[[], None]]
         self._canceled = False
         self._completed = False
         self._lock = Lock()
 
-    def on_cancel(self, callback: Callable[[], None]):
+    def on_cancel(self, callback):
+        # type: (Callable[[], None]) -> None
         if self._canceled:
             callback()
         else:
             self._callbacks.append(callback)
 
-    def remove_callback(self, callback: Callable[[], None]):
+    def remove_callback(self, callback):
+        # type: (Callable[[], None]) -> None
         self._callbacks.remove(callback)
 
     def cancel(self):
@@ -26,7 +28,7 @@ class CancellationToken:
             self._canceled = True
             self._completed = True
 
-        for f in self._callbacks.copy():
+        for f in [x for x in self._callbacks]:
             f()
 
     def complete(self):
