@@ -4,6 +4,7 @@ from typing import List, Callable
 
 class CancellationToken:
     def __init__(self):
+        # type: () -> None
         self._callbacks = []      # type: List[Callable[[], None]]
         self._canceled = False
         self._completed = False
@@ -21,6 +22,7 @@ class CancellationToken:
         self._callbacks.remove(callback)
 
     def cancel(self):
+        # type: () -> None
         with self._lock:
             if self._canceled:
                 return
@@ -32,13 +34,16 @@ class CancellationToken:
             f()
 
     def complete(self):
+        # type: () -> None
         with self._lock:
             self._completed = True
 
     @property
     def cancelled(self):
+        # type: () -> bool
         return self._canceled
 
     @property
     def completed(self):
+        # type: () -> bool
         return self._completed
