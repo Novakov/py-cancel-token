@@ -5,13 +5,16 @@ with open("README.md", "r") as fh:
 
 setup(
     name="cancel_token",
-    version="0.1.3",
+    version="0.1.4",
     author="Maciej Nowak",
     description="Simple CancellationToken",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Novakov/py-cancel-token",
     packages=['cancel_token'],
+    package_data={
+        'cancel_token': ['py.typed']
+    },
     classifiers=[
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
