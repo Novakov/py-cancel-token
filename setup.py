@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="cancel_token",
-    version="0.1.3",
+    version="0.1.4",
     author="Maciej Nowak",
     description="Simple CancellationToken",
     long_description=long_description,
