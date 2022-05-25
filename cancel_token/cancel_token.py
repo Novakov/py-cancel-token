@@ -12,10 +12,16 @@ class CancellationToken:
 
     def on_cancel(self, callback):
         # type: (Callable[[], None]) -> None
-        if self._canceled:
-            callback()
-        else:
-            self._callbacks.append(callback)
+
+        # the ._canceled never change from True to False,
+        # we can fast check without lock here
+        if not self._canceled:
+            with self._lock:
+                if not self._canceled:
+                    self._callbacks.append(callback)
+                    return
+
+        callback()
 
     def remove_callback(self, callback):
         # type: (Callable[[], None]) -> None
